@@ -158,7 +158,10 @@ def home():
                return render_template("index.html", SELECTED_MODEL = session["SELECTED_MODEL"], REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), MODEL_CHOSEN=False, SHOW_RESULT=False, RESULT=-1)
            else:
                return render_template("index.html", REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), MODEL_CHOSEN=False, SHOW_RESULT=False, RESULT=-1)
-               
+#@app.route("/api/perform_inference")
+#def inference(model_path, req_inputs):
+
+    
 def perform_inference(model_path:str, array:np.array) -> np.array:
     if model_path.endswith('joblib'):
         model = joblib.load(model_path)
