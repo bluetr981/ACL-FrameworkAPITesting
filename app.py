@@ -3,6 +3,7 @@ import joblib
 from xgboost import XGBClassifier
 import numpy as np
 import re
+import json
 
 app = Flask(__name__)
 app.secret_key = "110105103105104103104101103110"
@@ -17,7 +18,20 @@ replacement_rules_feature = {
 @app.route("/api/perform_inference", methods=["POST"])
 def inference():
     features = request.get_json(force=True)
-    return features
+    input_dict = json.load(features)
+
+    SelectedModel = input_dict["selected_model"]
+    CTS = input_dict["CoronalTibialSlope"]
+    MTS = input_dict["MedialTibialSlope"]
+    LTS = input_dict["LateralTibialSlope"]
+    MTD = input_dict["MedialTibialDepth"]
+    Sex = input_dict["selectsex"]
+
+    input_list = [CTS, MTS, LTS, MTD, Sex]
+
+    inference = {"Prediction: ":perform_inference(SelectedModel, input_list)}
+    
+    return json.dump(inference)
 
     
 def perform_inference(model_path:str, array:np.array) -> np.array:
