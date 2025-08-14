@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request, url_for, redirect, session
+from flask import Flask, render_template, request, url_for, redirect, session, jsonify
 import joblib
 from xgboost import XGBClassifier
 import numpy as np
 import re
-import json
 
 app = Flask(__name__)
 app.secret_key = "110105103105104103104101103110"
@@ -15,7 +14,11 @@ replacement_rules_feature = {
     "no": 0
 }
 
-@app.route("/", methods=["POST"])
+@app.route("/")
+def displayInformation():
+    return "<h1>The bulk of this website is for the API access of the ACL Injury Website</h1>"
+    
+@app.route("/api/inference", methods=["POST"])
 def inference():
     features = request.get_json(force=True)
     input_dict = json.load(features)
@@ -31,7 +34,7 @@ def inference():
 
     inference = {"Prediction: ":perform_inference(SelectedModel, input_list)}
     
-    return json.dump(inference)
+    return jsonify(inference)
 
     
 def perform_inference(model_path:str, array:np.array) -> np.array:
