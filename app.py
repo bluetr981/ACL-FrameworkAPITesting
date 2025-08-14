@@ -15,7 +15,7 @@ replacement_rules_feature = {
     "no": 0
 }
 
-@app.route("/api/perform_inference", methods=["POST"])
+@app.route("/", methods=["POST"])
 def inference():
     features = request.get_json(force=True)
     input_dict = json.load(features)
