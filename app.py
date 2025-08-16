@@ -54,7 +54,7 @@ def perform_inference(model_path:str, input:np.array):
         model.load_model(model_path)
     
     prediction = model.predict(input)
-    inference = prediction[-1].tolist()
+    inference = prediction.tolist()
     
     return inference
     
