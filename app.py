@@ -19,7 +19,7 @@ replacement_rules_feature = {
 def displayInformation():
     return "<h1><center>The bulk of this website is for the API access of the ACL Injury Website</center></h1>"
 
-@app.route("/healthz", methods=["POST"])
+@app.route("/healthz", methods=["GET", "POST"])
 def inference():
     features = request.get_json(force=True)
     
