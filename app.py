@@ -53,8 +53,8 @@ def perform_inference(model_path:str, input:np.array):
         model = XGBClassifier()
         model.load_model(model_path)
     
-    prediction = model.predict(input).tolist()
-    inference = list(int(prediction[-1]))
+    prediction = model.predict(input)
+    inference = prediction[-1].tolist()
     
     return inference
     
