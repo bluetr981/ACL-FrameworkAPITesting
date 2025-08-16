@@ -35,10 +35,8 @@ def inference():
     Sex = int(replacement_rules_feature.get(features.get("selected-sex")))
 
     input_list = np.array([CTS, MTS, LTS, MTD, Sex])
-
-    inference = {"Prediction":perform_inference(SelectedModel, input_list)}
     
-    return jsonify(inference)
+    return perform_inference(SelectedModel, input_list)
 
 def perform_inference(model_path:str, input:np.array) -> np.array:
     match = re.search(r'\[([\d,\s]+)\]', model_path)
