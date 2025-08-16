@@ -19,7 +19,7 @@ replacement_rules_feature = {
 def displayInformation():
     return "<h1>The bulk of this website is for the API access of the ACL Injury Website</h1>"
     
-@app.route("/healthz", methods=["POST"])
+'''@app.route("/healthz", methods=["POST"])
 def inference():
     features = request.get_json(force=True)
     input_dict = json.load(features)
@@ -57,7 +57,7 @@ def perform_inference(model_path:str, array:np.array) -> np.array:
     return prediction
     
     prediction = model.predict(array)
-    return int(prediction[-1])
+    return int(prediction[-1])'''
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
