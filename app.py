@@ -15,9 +15,9 @@ replacement_rules_feature = {
     "no": 0
 }
 
-@app.route("/")
+@app.route('/healthz')
 def displayInformation():
     return "<h1>The bulk of this website is for the API access of the ACL Injury Website</h1>"
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    app.run(host="0.0.0.0", debug=True)
