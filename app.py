@@ -40,7 +40,7 @@ def inference():
     
     return jsonify(inference)
 
-def perform_inference(model_path:str, array:np.array) -> np.array:
+def perform_inference(model_path:str, input:np.array) -> np.array:
     match = re.search(r'\[([\d,\s]+)\]', model_path)
     indices_str = match.group(1)
     indices = [int(idx.strip()) -1 for idx in indices_str.split(',')]
