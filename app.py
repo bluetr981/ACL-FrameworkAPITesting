@@ -27,7 +27,7 @@ def inference():
                 "MedialTibialDepth": "4",
                 "selected-sex": "Male"}
     
-    SelectedModel = features.get("selected_model")
+    SelectedModel = features.get("selected-model")
     CTS = int(features.get("CoronalTibialSlope"))
     MTS = int(features.get("MedialTibialSlope"))
     LTS = int(features.get("LateralTibialSlope"))
