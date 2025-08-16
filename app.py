@@ -27,12 +27,12 @@ def inference():
                 "MedialTibialDepth": "4",
                 "selected-sex": "Male"}
     
-    SelectedModel = int(features.get("selected_model"))
+    SelectedModel = features.get("selected_model")
     CTS = int(features.get("CoronalTibialSlope"))
     MTS = int(features.get("MedialTibialSlope"))
     LTS = int(features.get("LateralTibialSlope"))
     MTD = int(features.get("MedialTibialDepth"))
-    Sex = int(features.get("selected-sex"))
+    Sex = int(replacement_rules_feature.get(features.get("selected-sex")))
 
     input_list = np.array([CTS, MTS, LTS, MTD, Sex])
 
