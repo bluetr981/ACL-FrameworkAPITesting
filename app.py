@@ -27,16 +27,16 @@ def inference():
                 "MedialTibialDepth": "4",
                 "selected-sex": "Male"}
     
-    SelectedModel = features.get("selected_model")
-    CTS = features.get("CoronalTibialSlope")
-    MTS = features.get("MedialTibialSlope")
-    LTS = features.get("LateralTibialSlope")
-    MTD = features.get("MedialTibialDepth")
-    Sex = features.get("selected-sex")
+    SelectedModel = int(features.get("selected_model"))
+    CTS = int(features.get("CoronalTibialSlope"))
+    MTS = int(features.get("MedialTibialSlope"))
+    LTS = int(features.get("LateralTibialSlope"))
+    MTD = int(features.get("MedialTibialDepth"))
+    Sex = int(features.get("selected-sex"))
 
-    input_list = [CTS, MTS, LTS, MTD, Sex]
+    input_list = np.array([CTS, MTS, LTS, MTD, Sex])
 
-    inference = {"Prediction: ":perform_inference(SelectedModel, input_list)}
+    inference = {"Prediction":perform_inference(SelectedModel, input_list)}
     
     return jsonify(inference)
 
