@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, session, jsonify
 import joblib
 from xgboost import XGBClassifier
-import json
 import numpy as np
 import re
 
@@ -21,7 +20,12 @@ def displayInformation():
 
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
-    features = request.get_json(force=True)
+    features = {"selected-model":"models/trained_RF_Acc_model_[1, 2, 3, 4, 5]_1.joblib",
+                "CoronalTibialSlope": "1",
+                "MedialTibialSlope": "2", 
+                "LateralTibialSlope": "3",
+                "MedialTibialDepth": "4",
+                "selected-sex": "Male"}
     
     SelectedModel = features.get("selected_model")
     CTS = features.get("CoronalTibialSlope")
