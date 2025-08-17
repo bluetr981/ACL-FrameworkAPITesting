@@ -21,7 +21,6 @@ def displayInformation():
     return "<h1><center>The bulk of this website is for the API access of the ACL Injury Website</center></h1>"
 
 @app.route("/healthz", methods=["GET", "POST"])
-@cross_origin()
 def inference():
     features = {"selected-model":"models/trained_RF_Acc_model_[1, 2, 3, 4, 5]_1.joblib",
                 "CoronalTibialSlope": "1",
