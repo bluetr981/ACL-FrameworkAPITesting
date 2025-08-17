@@ -22,12 +22,7 @@ def displayInformation():
 
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
-    features = {"selected-model":"models/trained_RF_Acc_model_[1, 2, 3, 4, 5]_1.joblib",
-                "CoronalTibialSlope": "1",
-                "MedialTibialSlope": "2", 
-                "LateralTibialSlope": "3",
-                "MedialTibialDepth": "4",
-                "selected-sex": "Male"}
+    features = request.get_json(force=True)
     
     SelectedModel = features.get("selected-model")
     CTS = int(features.get("CoronalTibialSlope"))
