@@ -22,18 +22,21 @@ def displayInformation():
 
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
-    features = request.get_json(force=True)
+    if (request.get_json != None):
+        features = request.get_json(force=True)
     
-    SelectedModel = features.get("selected-model")
-    CTS = int(features.get("CoronalTibialSlope"))
-    MTS = int(features.get("MedialTibialSlope"))
-    LTS = int(features.get("LateralTibialSlope"))
-    MTD = int(features.get("MedialTibialDepth"))
-    Sex = int(replacement_rules_feature.get(features.get("selected-sex")))
+        SelectedModel = features.get("selected-model")
+        CTS = int(features.get("CoronalTibialSlope"))
+        MTS = int(features.get("MedialTibialSlope"))
+        LTS = int(features.get("LateralTibialSlope"))
+        MTD = int(features.get("MedialTibialDepth"))
+        Sex = int(replacement_rules_feature.get(features.get("selected-sex")))
 
-    input_list = np.array([CTS, MTS, LTS, MTD, Sex]).reshape(1, -1)
+        input_list = np.array([CTS, MTS, LTS, MTD, Sex]).reshape(1, -1)
     
-    return perform_inference(SelectedModel, input_list)
+        return perform_inference(SelectedModel, input_list)
+    else:
+        return "<h1><center>This API is currently not in use.</center></h1>"
 
 def perform_inference(model_path:str, input:np.array):
     match = re.search(r'\[([\d,\s]+)\]', model_path)
