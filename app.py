@@ -56,7 +56,7 @@ def perform_inference(model_path:str, input:np.array):
     prediction = model.predict(input)
     inference = prediction.tolist()
     
-    return inference
+    return inference[-1]
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
