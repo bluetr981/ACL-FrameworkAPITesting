@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, url_for, redirect, session, jsonify
+from flask_cors import CORS
 import joblib
 from xgboost import XGBClassifier
 import numpy as np
 import re
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = "110105103105104103104101103110"
 
 replacement_rules_feature = {
@@ -19,6 +21,7 @@ def displayInformation():
     return "<h1><center>The bulk of this website is for the API access of the ACL Injury Website</center></h1>"
 
 @app.route("/healthz", methods=["GET", "POST"])
+@cross_origin()
 def inference():
     features = {"selected-model":"models/trained_RF_Acc_model_[1, 2, 3, 4, 5]_1.joblib",
                 "CoronalTibialSlope": "1",
