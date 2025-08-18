@@ -36,7 +36,7 @@ def inference():
             MTS = int(-1)
         if (features.get("LateralTibialSlope") != "null"):
             LTS = int(features.get("LateralTibialSlope"))
-        else:nuk
+        else:
             LTS = int(-1)
         if (features.get("MedialTibialDepth") != "null"):
             MTD = int(features.get("MedialTibialDepth"))
