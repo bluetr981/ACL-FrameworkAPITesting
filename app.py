@@ -26,11 +26,26 @@ def inference():
         features = request.get_json(force=True)
     
         SelectedModel = features.get("selected-model")
-        CTS = int(features.get("CoronalTibialSlope"))
-        MTS = int(features.get("MedialTibialSlope"))
-        LTS = int(features.get("LateralTibialSlope"))
-        MTD = int(features.get("MedialTibialDepth"))
-        Sex = int(replacement_rules_feature.get(features.get("selected-sex")))
+        if (features.get("CoronalTibialSlope") != ""):
+            CTS = int(features.get("CoronalTibialSlope"))
+        else:
+            CTS = int(-1)
+        if (features.get("MedialTibialSlope") != ""):
+            MTS = int(features.get("MedialTibialSlope"))
+        else:
+            MTS = int(-1)
+        if (features.get("LateralTibialSlope") != ""):
+            LTS = int(features.get("LateralTibialSlope"))
+        else:
+            LTS = int(-1)
+        if (features.get("MedialTibialDepth") != ""):
+            MTD = int(features.get("MedialTibialDepth"))
+        else:
+            MTD = int(-1)
+        if (features.get("selected-sex") != ""):
+            Sex = int(replacement_rules_feature.get(features.get("selected-sex")))
+        else:
+            Sex = int(-1)
 
         input_list = np.array([CTS, MTS, LTS, MTD, Sex]).reshape(1, -1)
     
