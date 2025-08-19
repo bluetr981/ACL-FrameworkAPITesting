@@ -1,18 +1,13 @@
-from flask import Flask, render_template, request, url_for, redirect, session
+from flask import Flask, render_template, request, url_for, redirect, session, jsonify
+from flask_cors import CORS
 import joblib
 from xgboost import XGBClassifier
 import numpy as np
 import re
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = "110105103105104103104101103110"
-REQUEST_HISTORY = []
-LAST_REQUEST = ""
-
-path=""
-input_array=[]
-RESULT = -1
-MODEL_CHOSEN = False
 
 replacement_rules_feature = {
     "Male": 1,
@@ -21,153 +16,67 @@ replacement_rules_feature = {
     "no": 0
 }
 
-@app.route('/', methods=["POST", "GET"])
-def home():
-    if (request.method == "POST"):
-        if ("MedialTibialDepth" in request.form):
-          REQUEST_HISTORY.append("POST")
-          LAST_REQUEST = "POST"
+@app.route('/')
+def displayInformation():
+    return "<h1><center>The bulk of this website is for the API access of the ACL Injury Website</center></h1>"
 
-          session["REQUEST_HISTORY"] = REQUEST_HISTORY
-          session["LAST_REQUEST"] = LAST_REQUEST
-
-          match session["SELECTED_MODEL"]:
-              case "RF_Acc_[1, 2, 3, 4, 5]" | "SVM_Acc_model_[1, 2, 3, 4, 5]" | "XGB_F2_model_[1, 2, 3, 4, 5]":
-                means = np.array([2.8280, 5.8495, 7.1613, 2.4280, 0.4194]).reshape(1, -1)
-                stds = np.array([2.0196, 3.2234, 3.0335, 1.0566, 0.4961]).reshape(1, -1)
-                
-                cts = request.form["CoronalTibialSlope"]
-                mts = request.form["MedialTibialSlope"]
-                lts = request.form["LateralTibialSlope"]
-                mtd = request.form["MedialTibialDepth"]
-                sex = request.form["selectsex"]
-                
-                session["CTS"] = cts
-                session["MTS"] = mts
-                session["LTS"] = lts
-                session["MTD"] = mtd
-                session["SEX"] = sex
-                  
-                path = f'models/trained_RF_Acc_model_[1, 2, 3, 4, 5]_1.joblib'
-                input_array = np.array([cts, mts, lts, mtd, replacement_rules_feature[sex]]).reshape(1, -1)
-
-                input_array = (input_array - means) / stds
-                  
-                return redirect(url_for("home", REQUEST_HISTORY=session.get("REQUEST_HISTORY", []), SELECTED_MODEL = session["SELECTED_MODEL"], MODEL_CHOSEN = True, CTS=cts, MTS=mts, LTS=lts, MTD=mtd, SEX=sex, SHOW_RESULT=True, RESULT=perform_inference(path, input_array)))
-
-              case "SVM_Acc_model_[1, 2, 4, 5]":
-                means = np.array([2.8280, 5.8495, 2.4280, 0.4194]).reshape(1, -1)
-                stds = np.array([2.0196, 3.2234, 1.0566, 0.4961]).reshape(1, -1)
-                  
-                cts = request.form["CoronalTibialSlope"]
-                mts = request.form["MedialTibialSlope"]
-                mtd = request.form["MedialTibialDepth"]
-                sex = request.form["selectsex"]
-                  
-                session["CTS"] = cts
-                session["MTS"] = mts
-                session["MTD"] = mtd
-                session["SEX"] = sex
-                  
-                path = f'models/trained_SVM_Acc_model_[1, 2, 4, 5]_1.joblib'
-                input_array = np.array([cts, mts, mtd, replacement_rules_feature[sex]]).reshape(1, -1)
-
-                input_array = (input_array - means) / stds
-                  
-                return redirect(url_for("home", REQUEST_HISTORY=session.get("REQUEST_HISTORY", []), SELECTED_MODEL = session["SELECTED_MODEL"], MODEL_CHOSEN = True, CTS=cts, MTS=mts, MTD=mtd, SEX=sex, SHOW_RESULT=True, RESULT=perform_inference(path, input_array)))
-
-              case "SVM_F2_model_[2, 3, 4]":
-                means = np.array([5.8495, 7.1613, 2.4280]).reshape(1, -1)
-                stds = np.array([3.2234, 3.0335, 1.0566]).reshape(1, -1)
-
-                mts = request.form["MedialTibialSlope"]
-                lts = request.form["LateralTibialSlope"]
-                mtd = request.form["MedialTibialDepth"]
-
-                session["MTS"] = mts
-                session["LTS"] = lts
-                session["MTD"] = mtd
-                  
-                path = f'models/trained_SVM_Fb_model_[2, 3, 4]_1.joblib'
-                input_array = np.array([mts, lts, mtd]).reshape(1, -1)
-
-                input_array = (input_array - means) / stds
-                  
-                return redirect(url_for("home", REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), SELECTED_MODEL = session["SELECTED_MODEL"], MODEL_CHOSEN = True, MTS=mts, LTS=lts, MTD=mtd, SHOW_RESULT=True, RESULT=perform_inference(path, input_array)))
-        elif session["LAST_REQUEST"] == "POST":
-            REQUEST_HISTORY.append("POST")
-            LAST_REQUEST = "POST"
-
-            session["REQUEST_HISTORY"] = REQUEST_HISTORY
-            session["LAST_REQUEST"] = LAST_REQUEST
-
-            return redirect(url_for("home", REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), MODEL_CHOSEN=False, SHOW_RESULT=False, RESULT=-1))
+@app.route("/healthz", methods=["GET", "POST"])
+def inference():
+    if (request.method != "GET"):
+        data = request.get_json(force=True)
+    
+        selected_model = data.get("selected-model")
+        
+        if (data.get("CoronalTibialSlope") != "null"):
+            cts = float(data.get("CoronalTibialSlope"))
         else:
-            selectedmodel = request.form["select_model"]
+            cts = -1
             
-            REQUEST_HISTORY.append("POST")
-            LAST_REQUEST = "POST"
+        if (data.get("MedialTibialSlope") != "null"):
+            mts = float(data.get("MedialTibialSlope"))
+        else:
+            mts = -1
             
-            session["SELECTED_MODEL"] = selectedmodel
-            session["REQUEST_HISTORY"] = REQUEST_HISTORY
-            session["LAST_REQUEST"] = LAST_REQUEST
+        if (data.get("LateralTibialSlope") != "null"):
+            lts = float(data.get("LateralTibialSlope"))
+        else:
+            lts = -1
             
-            return render_template("index.html", REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), MODEL_CHOSEN = True, SELECTED_MODEL=session["SELECTED_MODEL"])
+        if (data.get("MedialTibialDepth") != "null"):
+            mtd = float(data.get("MedialTibialDepth"))
+        else:
+            mtd = -1
+            
+        if (data.get("selected-sex") != "null"):
+            sex = int(replacement_rules_feature.get(data.get("selected-sex")))
+        else:
+            sex = -1
+
+        input_list = np.array([cts, mts, lts, mtd, sex]).reshape(1, -1)
+    
+        return jsonify({'Prediction':perform_inference(selected_model, input_list)})
     else:
-        if ("SELECTED_MODEL" in session and "SELECTED_MODEL" in request.args and session["LAST_REQUEST"] != "GET"):
-          REQUEST_HISTORY.append("GET")
-          LAST_REQUEST = "GET"
+        return "<h1><center>This API is currently not in use.</center></h1>"
 
-          session["REQUEST_HISTORY"] = REQUEST_HISTORY
-          session["LAST_REQUEST"] = LAST_REQUEST
+def perform_inference(model_path:str, input:np.array):
+    match = re.search(r'\[([\d,\s]+)\]', model_path)
+    indices_str = match.group(1)
+    indices = [int(idx.strip()) -1 for idx in indices_str.split(',')]
+    input = input[:, indices]
+    means = np.array([2.8280, 5.8495, 7.1613, 2.4280, 0.4194]).reshape(1, -1)[:, indices]
+    stds = np.array([2.0196, 3.2234, 3.0335, 1.0566, 0.4961]).reshape(1, -1)[:, indices]
+    input = (input - means) / stds
 
-          match session["SELECTED_MODEL"]:
-              case "RF_Acc_[1, 2, 3, 4, 5]" | "SVM_Acc_model_[1, 2, 3, 4, 5]" | "XGB_F2_model_[1, 2, 3, 4, 5]":
-                  session.pop("CTS", None)
-                  session.pop("MTS", None)
-                  session.pop("LTS", None)
-                  session.pop("MTD", None)
-                  session.pop("SEX", None)
-
-                  return render_template("index.html", REQUEST_HISTORY=session.get("REQUEST_HISTORY", []), SELECTED_MODEL = request.args.get("SELECTED_MODEL"), MODEL_CHOSEN = True, cts = request.args.get("CTS"), mts = request.args.get("MTS"), lts = request.args.get("LTS"), mtd = request.args.get("MTD"), sex = request.args.get("SEX"), RESULT=request.args.get("RESULT"), SHOW_RESULT=True)
-
-              case "SVM_Acc_model_[1, 2, 4, 5]":
-                  session.pop("CTS", None)
-                  session.pop("MTS", None)
-                  session.pop("MTD", None)
-                  session.pop("SEX", None)
-
-                  return render_template("index.html", REQUEST_HISTORY=session.get("REQUEST_HISTORY", []), SELECTED_MODEL = request.args.get("SELECTED_MODEL"), MODEL_CHOSEN = True, cts = request.args.get("CTS"), mts = request.args.get("MTS"), mtd = request.args.get("MTD"), sex = request.args.get("SEX"), RESULT=request.args.get("RESULT"), SHOW_RESULT=True)
-
-              case _:
-                  session.pop("MTS", None)
-                  session.pop("LTS", None)
-                  session.pop("MTD", None)
-
-                  return render_template("index.html", REQUEST_HISTORY=session.get("REQUEST_HISTORY", []), SELECTED_MODEL = request.args.get("SELECTED_MODEL"), MODEL_CHOSEN = True, mts = request.args.get("MTS"), lts = request.args.get("LTS"), mtd = request.args.get("MTD"), RESULT=request.args.get("RESULT"), SHOW_RESULT=True)
-        elif ("SELECTED_MODEL" in request.args and session["LAST_REQUEST"] == "GET"):
-           return render_template("index.html", REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), MODEL_CHOSEN=False, SHOW_RESULT=False, RESULT=-1)
-        else:
-           REQUEST_HISTORY.append("GET")
-           LAST_REQUEST = "GET"
-
-           session["REQUEST_HISTORY"] = REQUEST_HISTORY
-           session["LAST_REQUEST"] = LAST_REQUEST
-
-           if ("SELECTED_MODEL" in session):
-               return render_template("index.html", SELECTED_MODEL = session["SELECTED_MODEL"], REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), MODEL_CHOSEN=False, SHOW_RESULT=False, RESULT=-1)
-           else:
-               return render_template("index.html", REQUEST_HISTORY = session.get("REQUEST_HISTORY", []), MODEL_CHOSEN=False, SHOW_RESULT=False, RESULT=-1)
-               
-def perform_inference(model_path:str, array:np.array) -> np.array:
     if model_path.endswith('joblib'):
         model = joblib.load(model_path)
     elif model_path.endswith('.json'):
         model = XGBClassifier()
         model.load_model(model_path)
     
-    prediction = model.predict(array)
-    return int(prediction[-1])
-
+    prediction = model.predict(input)
+    inference = prediction.tolist()
+    
+    return int(inference[-1])
+    
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
