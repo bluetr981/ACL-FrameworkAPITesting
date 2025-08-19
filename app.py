@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, session, jsonify
+ffrom flask import Flask, render_template, request, url_for, redirect, session, jsonify
 from flask_cors import CORS
 import joblib
 from xgboost import XGBClassifier
@@ -24,35 +24,32 @@ def displayInformation():
 def inference():
     if (request.method != "GET"):
         data = request.get_json(force=True)
-        return jsonify({"CTS":data.get("CoronalTibialSlope")})
-        
-        '''features = request.json()
     
-        SelectedModel = features.get("selected-model")
-        if (features.get("CoronalTibialSlope") != "null"):
-            CTS = int(features.get("CoronalTibialSlope"))
+        SelectedModel = data.get("selected-model")
+        if (data.get("CoronalTibialSlope") != "null"):
+            CTS = int(data.get("CoronalTibialSlope"))
         else:
             CTS = int(-1)
-        if (features.get("MedialTibialSlope") != "null"):
-            MTS = int(features.get("MedialTibialSlope"))
+        if (data.get("MedialTibialSlope") != "null"):
+            MTS = int(data.get("MedialTibialSlope"))
         else:
             MTS = int(-1)
-        if (features.get("LateralTibialSlope") != "null"):
-            LTS = int(features.get("LateralTibialSlope"))
+        if (data.get("LateralTibialSlope") != "null"):
+            LTS = int(data.get("LateralTibialSlope"))
         else:
             LTS = int(-1)
-        if (features.get("MedialTibialDepth") != "null"):
-            MTD = int(features.get("MedialTibialDepth"))
+        if (data.get("MedialTibialDepth") != "null"):
+            MTD = int(data.get("MedialTibialDepth"))
         else:
             MTD = int(-1)
-        if (features.get("selected-sex") != "null"):
-            Sex = int(replacement_rules_feature.get(features.get("selected-sex")))
+        if (data.get("selected-sex") != "null"):
+            Sex = int(replacement_rules_feature.get(data.get("selected-sex")))
         else:
             Sex = int(-1)
 
         input_list = np.array([CTS, MTS, LTS, MTD, Sex]).reshape(1, -1)
     
-        return perform_inference(SelectedModel, input_list)'''
+        return jsonify({'Prediction':perform_inference(SelectedModel, input_list)})
     else:
         return "<h1><center>This API is currently not in use.</center></h1>"
 
