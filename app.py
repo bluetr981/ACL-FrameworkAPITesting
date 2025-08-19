@@ -23,8 +23,9 @@ def displayInformation():
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
     if (request.method != "GET"):
-        return request.get_json(force=True)["CoronalTibialSlope"]
-
+        data = request.get_json(force=True)
+        return data
+        
         '''features = request.json()
     
         SelectedModel = features.get("selected-model")
