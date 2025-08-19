@@ -25,31 +25,36 @@ def inference():
     if (request.method != "GET"):
         data = request.get_json(force=True)
     
-        SelectedModel = data.get("selected-model")
+        selected_model = data.get("selected-model")
+        
         if (data.get("CoronalTibialSlope") != "null"):
-            CTS = int(data.get("CoronalTibialSlope"))
+            cts = float(data.get("CoronalTibialSlope"))
         else:
-            CTS = int(-1)
+            cts = -1
+            
         if (data.get("MedialTibialSlope") != "null"):
-            MTS = int(data.get("MedialTibialSlope"))
+            mts = float(data.get("MedialTibialSlope"))
         else:
-            MTS = int(-1)
+            mts = -1
+            
         if (data.get("LateralTibialSlope") != "null"):
-            LTS = int(data.get("LateralTibialSlope"))
+            lts = float(data.get("LateralTibialSlope"))
         else:
-            LTS = int(-1)
+            lts = -1
+            
         if (data.get("MedialTibialDepth") != "null"):
-            MTD = int(data.get("MedialTibialDepth"))
+            mtd = float(data.get("MedialTibialDepth"))
         else:
-            MTD = int(-1)
+            mtd = -1
+            
         if (data.get("selected-sex") != "null"):
-            Sex = int(replacement_rules_feature.get(data.get("selected-sex")))
+            sex = int(replacement_rules_feature.get(data.get("selected-sex")))
         else:
-            Sex = int(-1)
+            sex = -1
 
         input_list = np.array([CTS, MTS, LTS, MTD, Sex]).reshape(1, -1)
     
-        return jsonify({'Prediction':perform_inference(SelectedModel, input_list)})
+        return jsonify({'Prediction':perform_inference(selected_model, input_list)})
     else:
         return "<h1><center>This API is currently not in use.</center></h1>"
 
@@ -71,7 +76,7 @@ def perform_inference(model_path:str, input:np.array):
     prediction = model.predict(input)
     inference = prediction.tolist()
     
-    return inference[-1]
+    return int(inference[-1])
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
