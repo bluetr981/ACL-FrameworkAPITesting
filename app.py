@@ -23,7 +23,8 @@ def displayInformation():
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
     if (request.method != "GET"):
-        features = request.get_json(force=True)
+        return "THIS IS A POST REQUEST."
+        '''features = request.json()
     
         SelectedModel = features.get("selected-model")
         if (features.get("CoronalTibialSlope") != "null"):
@@ -49,7 +50,7 @@ def inference():
 
         input_list = np.array([CTS, MTS, LTS, MTD, Sex]).reshape(1, -1)
     
-        return perform_inference(SelectedModel, input_list)
+        return perform_inference(SelectedModel, input_list)'''
     else:
         return "<h1><center>This API is currently not in use.</center></h1>"
 
