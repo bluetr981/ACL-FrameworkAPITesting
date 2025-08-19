@@ -24,7 +24,7 @@ def displayInformation():
 def inference():
     if (request.method != "GET"):
         data = request.get_json(force=True)
-        return data.get("CoronalTibialSlope")
+        return jsonify({"CTS":data.get("CoronalTibialSlope")})
         
         '''features = request.json()
     
