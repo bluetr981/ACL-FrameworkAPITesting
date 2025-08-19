@@ -23,7 +23,7 @@ def displayInformation():
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
     if (request.method != "GET"):
-        return "THIS IS A POST REQUEST."
+        return request.json()
         '''features = request.json()
     
         SelectedModel = features.get("selected-model")
