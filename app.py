@@ -52,7 +52,7 @@ def inference():
         else:
             sex = -1
 
-        input_list = np.array([CTS, MTS, LTS, MTD, Sex]).reshape(1, -1)
+        input_list = np.array([cts, mts, lts, mtd, sex]).reshape(1, -1)
     
         return jsonify({'Prediction':perform_inference(selected_model, input_list)})
     else:
