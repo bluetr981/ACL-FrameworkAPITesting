@@ -27,27 +27,27 @@ def inference():
     
         selected_model = data.get("selected-model")
         
-        if (data.get("CoronalTibialSlope") != "null"):
+        if (data.get("CoronalTibialSlope") != "-1"):
             cts = float(data.get("CoronalTibialSlope"))
         else:
             cts = -1
             
-        if (data.get("MedialTibialSlope") != "null"):
+        if (data.get("MedialTibialSlope") != "-1"):
             mts = float(data.get("MedialTibialSlope"))
         else:
             mts = -1
             
-        if (data.get("LateralTibialSlope") != "null"):
+        if (data.get("LateralTibialSlope") != "-1"):
             lts = float(data.get("LateralTibialSlope"))
         else:
             lts = -1
             
-        if (data.get("MedialTibialDepth") != "null"):
+        if (data.get("MedialTibialDepth") != "-1"):
             mtd = float(data.get("MedialTibialDepth"))
         else:
             mtd = -1
             
-        if (data.get("selected-sex") != "null"):
+        if (data.get("selected-sex") != "-1"):
             sex = int(replacement_rules_feature.get(data.get("selected-sex")))
         else:
             sex = -1
