@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, session, jsonify
 from flask_cors import CORS
-from dotenv import load_dotenv
 from xgboost import XGBClassifier
 
 import joblib
@@ -10,8 +9,6 @@ import re
 app = Flask(__name__)
 CORS(app)
 app.secret_key = "110105103105104103104101103110"
-
-load_dotenv()
 
 replacement_rules_feature = {
     "Male": 1,
