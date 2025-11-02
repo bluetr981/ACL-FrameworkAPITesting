@@ -1,11 +1,18 @@
 from flask import Flask, render_template, request, url_for, redirect, session, jsonify
 from flask_cors import CORS
-from xgboost import XGBClassifier
-
-import joblib
 import numpy as np
 import re
 
+import torch
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from autogluon.core.metrics import make_scorer
+from sklearn.metrics import fbeta_score
+from autogluon.tabular import TabularPredictor
+import shap
+import torch
+import matplotlib.pyplot as plt
+        
 app = Flask(__name__)
 CORS(app)
 app.secret_key = "110105103105104103104101103110"
@@ -17,6 +24,19 @@ replacement_rules_feature = {
     "no": 0
 }
 
+class AutogluonWrapper:
+    def __init__(self, predictor, feature_names, model_name):
+        self.ag_model = predictor
+        self.feature_names = feature_names
+        self.model_name = model_name
+
+    def predict_binary_prob(self, X):
+        if isinstance(X, pd.Series):
+            X = X.values.reshape(1, -1)
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X, columns=self.feature_names)
+        return self.ag_model.predict_proba(X, model=self.model_name, as_multiclass=False)
+        
 @app.route('/')
 def displayInformation():
     return "<h1><center>The bulk of this website is for the API access of the ACL Injury Website</center></h1>"
@@ -55,29 +75,37 @@ def inference():
 
         input_list = np.array([cts, mts, lts, mtd, sex]).reshape(1, -1)
     
-        return jsonify({'Prediction':perform_inference(selected_model, input_list)})
+        return jsonify({'Outputs':perform_inference(selected_model, input_list)})
     else:
         return "<h1><center>This API is currently not in use.</center></h1>"
 
-def perform_inference(model_path:str, input:np.array):
-    match = re.search(r'\[([\d,\s]+)\]', model_path)
-    indices_str = match.group(1)
-    indices = [int(idx.strip()) -1 for idx in indices_str.split(',')]
-    input = input[:, indices]
-    means = np.array([2.8280, 5.8495, 7.1613, 2.4280, 0.4194]).reshape(1, -1)[:, indices]
-    stds = np.array([2.0196, 3.2234, 3.0335, 1.0566, 0.4961]).reshape(1, -1)[:, indices]
-    input = (input - means) / stds
+def perform_inference(predictor_path:str, input:np.array):
+    input_array = input.tolist()
+    outputs = []
 
-    if model_path.endswith('joblib'):
-        model = joblib.load(model_path)
-    elif model_path.endswith('.json'):
-        model = XGBClassifier()
-        model.load_model(model_path)
+    if train_scale == 'Full':
+        med = pd.Series([3.000, 6.000, 7.000, 2.345, 0.000])
+    else:
+        med = pd.Series([3.00, 6.00, 8.00, 2.37, 0.00])
     
     prediction = model.predict(input)
     inference = prediction.tolist()
+
+    outputs.append(int(inference[-1]))
+    input_array.append(int(inference[-1]))
+
+    test_df = pd.DataFrame(input_array, columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex', 'Injury'])
+    X_test = test_df.iloc[:, :-1]
+    y_test = test_df.iloc[:, -1]
+
+    predictor = TabularPredictor.load(predictor_path, require_py_version_match=False)
+    predictions = predictor.predict(test_df, model=specific_model_name).reset_index(drop=True)
+    predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+    confidence_score = predicted_probs.iloc[0, 1]
+
+    outputs.append(confidence_score)
     
-    return int(inference[-1])
-    
+    return outputs
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
