@@ -80,34 +80,6 @@ def inference():
         return "<h1><center>This API is currently not in use.</center></h1>"
 
 def perform_inference(predictor_path:str, input:np.array):
-        specific_model_name = 'WeightedEnsemble_L2'
-        
-        input_array = input.tolist()
-        outputs = []
-        
-        if 'Full' in predictor_path:
-                med = pd.Series([3.000, 6.000, 7.000, 2.345, 0.000])
-        else:
-                med = pd.Series([3.00, 6.00, 8.00, 2.37, 0.00])
-        
-        prediction = model.predict(input)
-        inference = prediction.tolist()
-        
-        outputs.append(int(inference[-1]))
-        input_array.append(int(inference[-1]))
-        
-        test_df = pd.DataFrame(input_array, columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex', 'Injury']) 
-        X_test = test_df.iloc[:, :-1]
-        y_test = test_df.iloc[:, -1]
-        
-        predictor = TabularPredictor.load(predictor_path, require_py_version_match=False)
-        predictions = predictor.predict(test_df, model=specific_model_name).reset_index(drop=True)
-        predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
-        confidence_score = predicted_probs.iloc[0, 1]
-        
-        outputs.append(confidence_score)
-        
-        return outputs
-
+        return predictor_path
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
