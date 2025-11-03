@@ -46,41 +46,6 @@ def inference():
     if (request.method != "GET"):
             return jsonify({'Output':'This is a POST Request.'})
     return jsonify({'Output':'This is a GET REQUEST!'})
-        
-        '''data = request.get_json(force=True)
-    
-        selected_model = data.get("selected-model")
-        
-        if (data.get("CoronalTibialSlope") != "-1"):
-            cts = float(data.get("CoronalTibialSlope"))
-        else:
-            cts = -1
-            
-        if (data.get("MedialTibialSlope") != "-1"):
-            mts = float(data.get("MedialTibialSlope"))
-        else:
-            mts = -1
-            
-        if (data.get("LateralTibialSlope") != "-1"):
-            lts = float(data.get("LateralTibialSlope"))
-        else:
-            lts = -1
-            
-        if (data.get("MedialTibialDepth") != "-1"):
-            mtd = float(data.get("MedialTibialDepth"))
-        else:
-            mtd = -1
-            
-        if (data.get("selected-sex") != "-1"):
-            sex = int(replacement_rules_feature.get(data.get("selected-sex")))
-        else:
-            sex = -1
-
-        input_list = np.array([cts, mts, lts, mtd, sex]).reshape(1, -1)
-    
-        return jsonify({'Outputs':perform_inference(selected_model, input_list)})
-    else:
-        return "<h1><center>This API is currently not in use.</center></h1>'''
 
 def perform_inference(predictor_path:str, input:np.array):
         return predictor_path
