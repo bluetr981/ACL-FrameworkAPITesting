@@ -75,24 +75,16 @@ def inference():
                         sex = int(replacement_rules_feature.get(data.get("selected-sex")))
                 else:
                         sex = -1
-                        
-                if 'Full' in selected_model:
-                        med = pd.Series([3.000, 6.000, 7.000, 2.345, 0.000])
-                else:
-                        med = pd.Series([3.00, 6.00, 8.00, 2.37, 0.00])
                 
                 input_list = np.array([cts, mts, lts, mtd, sex])
-                test_df = pd.DataFrame(input_list, columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
-
-                X_test = test_df.iloc[:, :-1]
-                y_test = test_df.iloc[:, -1]
-
+                test_df = pd.DataFrame([input_list], columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
+                
                 predictor = TabularPredictor.load(selected_model, require_py_version_match = False)
                 predictions = predictor.predict(test_df, model=specific_model_name).reset_index(drop=True)
                 predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
 
                 verdict = predictions.iloc[0]
-                confidence = predicted_probs[0, verdict]
+                confidence = predicted_probs.iloc[0, verdict]
 
                 outputs = {'Verdict':verdict, 
                            'Confidence':confidence}
