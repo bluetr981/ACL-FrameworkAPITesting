@@ -91,7 +91,7 @@ def inference():
         predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
 
         verdict = predictions.iloc[0]
-        confidence = predicted_probs[0, int(verdict)]
+        confidence = predicted_probs[0, verdict]
 
         outputs = {'Verdict':verdict, 
                    'Confidence':confidence}
