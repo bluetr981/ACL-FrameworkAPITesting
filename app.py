@@ -87,7 +87,7 @@ def inference():
                 X_test = test_df.iloc[:, :-1]
                 y_test = test_df.iloc[:, -1]
 
-                predictor = TabularPredictor.load(predictor_path, require_py_version_match = False)
+                predictor = TabularPredictor.load(selected_model, require_py_version_match = False)
                 predictions = predictor.predict(test_df, model=specific_model_name).reset_index(drop=True)
                 predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
 
