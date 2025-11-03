@@ -76,7 +76,7 @@ def inference():
                 else:
                         sex = -1
                         
-                if 'Full' in predictor_path:
+                if 'Full' in selected_model:
                         med = pd.Series([3.000, 6.000, 7.000, 2.345, 0.000])
                 else:
                         med = pd.Series([3.00, 6.00, 8.00, 2.37, 0.00])
