@@ -44,7 +44,8 @@ def displayInformation():
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
     if (request.method != "GET"):
-        data = request.get_json(force=True)
+            return jsonify({'Output':'This is a GET Request.'})
+        '''data = request.get_json(force=True)
     
         selected_model = data.get("selected-model")
         
@@ -77,9 +78,10 @@ def inference():
     
         return jsonify({'Outputs':perform_inference(selected_model, input_list)})
     else:
-        return "<h1><center>This API is currently not in use.</center></h1>"
+        return "<h1><center>This API is currently not in use.</center></h1>'''
 
 def perform_inference(predictor_path:str, input:np.array):
         return predictor_path
+        
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
