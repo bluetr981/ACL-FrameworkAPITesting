@@ -81,7 +81,7 @@ def inference():
                 med = pd.Series([3.00, 6.00, 8.00, 2.37, 0.00])
                 
         input_list = np.array([cts, mts, lts, mtd, sex])
-        test_df = pd.DataFrame(test_data, columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
+        test_df = pd.DataFrame(input_list, columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
 
         X_test = test_df.iloc[:, :-1]
         y_test = test_df.iloc[:, -1]
