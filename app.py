@@ -46,59 +46,60 @@ def displayInformation():
 
 @app.route("/healthz", methods=["GET", "POST"])
 def inference():
-        specific_model_name = 'WeightedEnsemble_L2'
-        data = request.get_json(force=True)
-        selected_model = data.get("selected-model")
-        
-        if (data.get("CoronalTibialSlope") != "-1"):
-            cts = float(data.get("CoronalTibialSlope"))
-        else:
-            cts = -1
-            
-        if (data.get("MedialTibialSlope") != "-1"):
-            mts = float(data.get("MedialTibialSlope"))
-        else:
-            mts = -1
-            
-        if (data.get("LateralTibialSlope") != "-1"):
-            lts = float(data.get("LateralTibialSlope"))
-        else:
-            lts = -1
-            
-        if (data.get("MedialTibialDepth") != "-1"):
-            mtd = float(data.get("MedialTibialDepth"))
-        else:
-            mtd = -1
-            
-        if (data.get("selected-sex") != "-1"):
-            sex = int(replacement_rules_feature.get(data.get("selected-sex")))
-        else:
-            sex = -1
-
-        if 'Full' in predictor_path:
-                med = pd.Series([3.000, 6.000, 7.000, 2.345, 0.000])
-        else:
-                med = pd.Series([3.00, 6.00, 8.00, 2.37, 0.00])
+        if request.method != "GET":
+                specific_model_name = 'WeightedEnsemble_L2'
+                data = request.get_json(force=True)
+                selected_model = data.get("selected-model")
                 
-        input_list = np.array([cts, mts, lts, mtd, sex])
-        test_df = pd.DataFrame(input_list, columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
+                if (data.get("CoronalTibialSlope") != "-1"):
+                    cts = float(data.get("CoronalTibialSlope"))
+                else:
+                    cts = -1
+                
+                if (data.get("MedialTibialSlope") != "-1"):
+                        mts = float(data.get("MedialTibialSlope"))
+                else:
+                        mts = -1
+                
+                if (data.get("LateralTibialSlope") != "-1"):
+                        lts = float(data.get("LateralTibialSlope"))
+                else:
+                        lts = -1
+                
+                if (data.get("MedialTibialDepth") != "-1"):
+                        mtd = float(data.get("MedialTibialDepth"))
+                else:
+                        mtd = -1
+                
+                if (data.get("selected-sex") != "-1"):
+                        sex = int(replacement_rules_feature.get(data.get("selected-sex")))
+                else:
+                        sex = -1
+                        
+                if 'Full' in predictor_path:
+                        med = pd.Series([3.000, 6.000, 7.000, 2.345, 0.000])
+                else:
+                        med = pd.Series([3.00, 6.00, 8.00, 2.37, 0.00])
+                
+                input_list = np.array([cts, mts, lts, mtd, sex])
+                test_df = pd.DataFrame(input_list, columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
 
-        X_test = test_df.iloc[:, :-1]
-        y_test = test_df.iloc[:, -1]
+                X_test = test_df.iloc[:, :-1]
+                y_test = test_df.iloc[:, -1]
 
-        predictor = TabularPredictor.load(predictor_path, require_py_version_match = False)
-        predictions = predictor.predict(test_df, model=specific_model_name).reset_index(drop=True)
-        predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+                predictor = TabularPredictor.load(predictor_path, require_py_version_match = False)
+                predictions = predictor.predict(test_df, model=specific_model_name).reset_index(drop=True)
+                predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
 
-        verdict = predictions.iloc[0]
-        confidence = predicted_probs[0, verdict]
+                verdict = predictions.iloc[0]
+                confidence = predicted_probs[0, verdict]
 
-        outputs = {'Verdict':verdict, 
-                   'Confidence':confidence}
+                outputs = {'Verdict':verdict, 
+                           'Confidence':confidence}
         
-        return jsonify(outputs)
-    else:
-        return "<h1><center>This API is currently not in use.</center></h1>
+                return jsonify(outputs)
+        else:
+                return "<h1><center>This API is currently not in use.</center></h1>
         
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
