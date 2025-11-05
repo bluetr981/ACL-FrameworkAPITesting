@@ -27,12 +27,12 @@ replacement_rules_feature = {
 UNLIKELY_RESULT = 0
 LIKELY_RESULT = 1
 
-TabularPredictor.load('models/AutoGluon_balanced_accuracy_42/models', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_balanced_accuracy_Full/models', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f1_42/models', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f1_Full/models', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f2_42/models', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f2_Full/models', require_py_version_match = False)
+TabularPredictor.load('models/AutoGluon_balanced_accuracy_42/', require_py_version_match = False)
+TabularPredictor.load('models/AutoGluon_balanced_accuracy_Full/', require_py_version_match = False)
+TabularPredictor.load('models/AutoGluon_f1_42/', require_py_version_match = False)
+TabularPredictor.load('models/AutoGluon_f1_Full/', require_py_version_match = False)
+TabularPredictor.load('models/AutoGluon_f2_42/', require_py_version_match = False)
+TabularPredictor.load('models/AutoGluon_f2_Full/', require_py_version_match = False)
 
 class AutogluonWrapper:
     def __init__(self, predictor, feature_names, model_name):
