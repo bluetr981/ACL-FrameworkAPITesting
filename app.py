@@ -27,12 +27,12 @@ replacement_rules_feature = {
 UNLIKELY_RESULT = 0
 LIKELY_RESULT = 1
 
-TabularPredictor.load('models/AutoGluon_balanced_accuracy_42/', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_balanced_accuracy_Full/', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f1_42/', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f1_Full/', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f2_42/', require_py_version_match = False)
-TabularPredictor.load('models/AutoGluon_f2_Full/', require_py_version_match = False)
+predictorOne = TabularPredictor.load('models/AutoGluon_balanced_accuracy_42/', require_py_version_match = False)
+predictorTwo = TabularPredictor.load('models/AutoGluon_balanced_accuracy_Full/', require_py_version_match = False)
+predictorThree = TabularPredictor.load('models/AutoGluon_f1_42/', require_py_version_match = False)
+predictorFour = TabularPredictor.load('models/AutoGluon_f1_Full/', require_py_version_match = False)
+predictorFive = TabularPredictor.load('models/AutoGluon_f2_42/', require_py_version_match = False)
+predictorSix = TabularPredictor.load('models/AutoGluon_f2_Full/', require_py_version_match = False)
 
 class AutogluonWrapper:
     def __init__(self, predictor, feature_names, model_name):
@@ -85,9 +85,26 @@ def inference():
                 
                 input_list = np.array([cts, mts, lts, mtd, sex])
                 test_df = pd.DataFrame([input_list], columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
-                
-                predictions = predictor.predict(test_df, model=specific_model_name).reset_index(drop=True)
-                predicted_probs = predictor.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+
+                match selected_model:
+                        case "models/AutoGluon_balanced_accuracy_42/":
+                                predictions = predictorOne.predict(test_df, model=specific_model_name).reset_index(drop=True)
+                                predicted_probs = predictorOne.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+                        case "models/AutoGluon_balanced_accuracy_Full/":
+                                predictions = predictorTwo.predict(test_df, model=specific_model_name).reset_index(drop=True)
+                                predicted_probs = predictorTwo.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+                        case "models/AutoGluon_f1_42/":
+                                predictions = predictorThree.predict(test_df, model=specific_model_name).reset_index(drop=True)
+                                predicted_probs = predictorThree.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+                        case "models/AutoGluon_f1_Full/":
+                                predictions = predictorFour.predict(test_df, model=specific_model_name).reset_index(drop=True)
+                                predicted_probs = predictorFour.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+                        case "models/AutoGluon_f2_42/":
+                                predictions = predictorFive.predict(test_df, model=specific_model_name).reset_index(drop=True)
+                                predicted_probs = predictorFive.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
+                        case "models/AutoGluon_f2_Full/":
+                                predictions = predictorSix.predict(test_df, model=specific_model_name).reset_index(drop=True)
+                                predicted_probs = predictorSix.predict_proba(test_df, model=specific_model_name).reset_index(drop=True)
 
                 verdict = predictions.iloc[0]
                 confidence = predicted_probs.iloc[0, verdict]
