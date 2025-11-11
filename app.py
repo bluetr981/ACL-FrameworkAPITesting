@@ -83,9 +83,9 @@ def inference():
                 else:
                         sex = -1
                 
-                input_list = np.array([cts, mts, lts, mtd, sex])
+                input_list = np.array([1.0, 2.0, 3.0, 4.0, 0])
 
-                return input_list[0]
+                return {"Output": input_list[0]}
                 
                 '''test_df = pd.DataFrame([input_list], columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
 
