@@ -83,7 +83,7 @@ def inference():
                 else:
                         sex = -1
                 
-                input_list = np.array([1.0, 2.0, 3.0, 4.0, 0])
+                input_list = np.array([cts, mts, lts, mtd, sex])
 
                 return {"Output": input_list[0]}
                 
