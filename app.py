@@ -117,4 +117,4 @@ def inference():
                 return "<h1><center>This API is currently not in use.</center></h1>"
         
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, require_py_version_match=False)
+    app.run(host="0.0.0.0", debug=True)
