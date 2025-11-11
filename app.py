@@ -84,7 +84,10 @@ def inference():
                         sex = -1
                 
                 input_list = np.array([cts, mts, lts, mtd, sex])
-                test_df = pd.DataFrame([input_list], columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
+
+                return input_list[0]
+                
+                '''test_df = pd.DataFrame([input_list], columns=['CTS', 'MTS', 'LTS', 'MTD', 'Sex'])
 
                 match selected_model:
                         case "models/AutoGluon_balanced_accuracy_42/":
@@ -112,7 +115,7 @@ def inference():
                 outputs = {'Verdict':verdict, 
                            'Confidence':confidence}
         
-                return jsonify(outputs)
+                return jsonify(outputs)'''
         else:
                 return "<h1><center>This API is currently not in use.</center></h1>"
         
